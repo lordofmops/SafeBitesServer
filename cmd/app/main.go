@@ -25,6 +25,7 @@ func main() {
 		&entity.Favorites{},
 		&entity.ShoppingList{},
 		&entity.ShoppingListProduct{},
+		&entity.SearchHistory{},
 		&entity.Store{})
 
 	userRepo := repository.NewUserRepository(db)
@@ -41,7 +42,10 @@ func main() {
 	storeRepo := repository.NewStoreRepository(db)
 	storeUC := usecase.NewStoreUsecase(storeRepo)
 
-	r := router.NewRouter(userUC, authUC, favoritesUC, listUC, storeUC)
+	historyRepo := repository.NewSearchHistoryRepository(db)
+	historyUC := usecase.NewSearchHistoryUsecase(historyRepo)
+
+	r := router.NewRouter(userUC, authUC, favoritesUC, listUC, storeUC, historyUC)
 
 	log.Println("Server starting at :8080")
 	if err := http.ListenAndServe(":8080", r); err != nil {

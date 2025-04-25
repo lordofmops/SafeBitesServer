@@ -1,14 +1,13 @@
 package entity
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"time"
+)
 
-type History struct {
-	ID     uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
-	UserID uuid.UUID `gorm:"not null"`
-}
-
-type HistoryProduct struct {
-	ID        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
-	HistoryID uuid.UUID `gorm:"not null"`
-	Barcode   string    `gorm:"not null"`
+type SearchHistory struct {
+	ID        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key" json:"id"`
+	UserID    uuid.UUID `gorm:"type:uuid;not null" json:"-"`
+	Barcode   string    `gorm:"not null" json:"barcode"`
+	CreatedAt time.Time `gorm:"autoCreateTime" json:"-"`
 }

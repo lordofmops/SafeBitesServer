@@ -14,7 +14,8 @@ func NewRouter(
 	authUC *usecase.AuthUsecase,
 	favoritesUC *usecase.FavoritesUsecase,
 	listUC *usecase.ShoppingListUsecase,
-	storeUC *usecase.StoreUsecase) http.Handler {
+	storeUC *usecase.StoreUsecase,
+	historyUC *usecase.SearchHistoryUsecase) http.Handler {
 
 	r := chi.NewRouter()
 
@@ -42,6 +43,11 @@ func NewRouter(
 
 	r.Route("/stores", func(r chi.Router) {
 		r.Mount("/", handler.NewStoreHandler(storeUC).Routes())
+	})
+
+	r.Route("/history", func(r chi.Router) {
+		r.Use(middleware.JWTAuth)
+		r.Mount("/", handler.NewSearchHistoryHandler(historyUC).Routes())
 	})
 
 	return r
