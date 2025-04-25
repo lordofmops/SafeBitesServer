@@ -20,7 +20,11 @@ func main() {
 		log.Fatal("failed to connect database:", err)
 	}
 
-	db.AutoMigrate(&entity.User{}, &entity.Favorites{})
+	db.AutoMigrate(
+		&entity.User{},
+		&entity.Favorites{},
+		&entity.ShoppingList{},
+		&entity.ShoppingListProduct{})
 
 	userRepo := repository.NewUserRepository(db)
 	userUC := usecase.NewUserUsecase(userRepo)
@@ -30,7 +34,10 @@ func main() {
 
 	authUC := usecase.NewAuthUsecase(userRepo, []byte("your-secret-key"))
 
-	r := router.NewRouter(userUC, authUC, favoritesUC)
+	listRepo := repository.NewShoppingListRepository(db)
+	listUC := usecase.NewShoppingListUsecase(listRepo)
+
+	r := router.NewRouter(userUC, authUC, favoritesUC, listUC)
 
 	log.Println("Server starting at :8080")
 	if err := http.ListenAndServe(":8080", r); err != nil {

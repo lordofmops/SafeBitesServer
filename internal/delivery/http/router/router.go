@@ -9,7 +9,12 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func NewRouter(userUC *usecase.UserUsecase, authUC *usecase.AuthUsecase, favoritesUC *usecase.FavoritesUsecase) http.Handler {
+func NewRouter(
+	userUC *usecase.UserUsecase,
+	authUC *usecase.AuthUsecase,
+	favoritesUC *usecase.FavoritesUsecase,
+	listUC *usecase.ShoppingListUsecase) http.Handler {
+
 	r := chi.NewRouter()
 
 	r.Mount("/auth", handler.NewAuthHandler(authUC).Routes())
@@ -27,6 +32,11 @@ func NewRouter(userUC *usecase.UserUsecase, authUC *usecase.AuthUsecase, favorit
 	r.Route("/favorites", func(r chi.Router) {
 		r.Use(middleware.JWTAuth)
 		r.Mount("/", handler.NewFavoritesHandler(favoritesUC).Routes())
+	})
+
+	r.Route("/lists", func(r chi.Router) {
+		r.Use(middleware.JWTAuth)
+		r.Mount("/", handler.NewShoppingListHandler(listUC).Routes())
 	})
 
 	return r
