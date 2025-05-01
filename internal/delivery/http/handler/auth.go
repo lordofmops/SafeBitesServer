@@ -21,7 +21,6 @@ func (h *AuthHandler) Routes() http.Handler {
 	mux := chi.NewRouter()
 	mux.Post("/register", h.Register)
 	mux.Post("/login", h.Login)
-	//mux.Get("/me", h.Me)
 	return mux
 }
 
