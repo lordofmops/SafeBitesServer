@@ -17,7 +17,7 @@ func NewStoreHandler(uc *usecase.StoreUsecase) *StoreHandler {
 	return &StoreHandler{uc: uc}
 }
 
-func (h *StoreHandler) Routes() chi.Router {
+func (h *StoreHandler) PublicRoutes() chi.Router {
 	r := chi.NewRouter()
 	r.Get("/all", h.GetAll)
 	r.Post("/", h.CreateStore)

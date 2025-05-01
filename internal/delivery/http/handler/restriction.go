@@ -26,7 +26,7 @@ func (h *RestrictionHandler) UserRoutes() chi.Router {
 	return r
 }
 
-func (h *RestrictionHandler) Routes() chi.Router {
+func (h *RestrictionHandler) PublicRoutes() chi.Router {
 	r := chi.NewRouter()
 	r.Post("/", h.CreateRestriction)
 	r.Get("/", h.GetAll)

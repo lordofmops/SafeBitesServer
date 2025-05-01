@@ -18,7 +18,7 @@ func NewFavoritesHandler(uc *usecase.FavoritesUsecase) *FavoritesHandler {
 	return &FavoritesHandler{uc: uc}
 }
 
-func (h *FavoritesHandler) Routes() chi.Router {
+func (h *FavoritesHandler) UserRoutes() chi.Router {
 	r := chi.NewRouter()
 	r.Get("/", h.List)
 	r.Post("/", h.Add)

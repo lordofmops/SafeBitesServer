@@ -15,39 +15,28 @@ func NewRouter(
 	favoritesUC *usecase.FavoritesUsecase,
 	listUC *usecase.ShoppingListUsecase,
 	storeUC *usecase.StoreUsecase,
-	historyUC *usecase.SearchHistoryUsecase) http.Handler {
+	historyUC *usecase.SearchHistoryUsecase,
+	restrictionUC *usecase.RestrictionUsecase) http.Handler {
 
 	r := chi.NewRouter()
 
-	r.Mount("/auth", handler.NewAuthHandler(authUC).Routes())
+	r.Route("/api", func(r chi.Router) {
+		r.Mount("/auth", handler.NewAuthHandler(authUC).Routes())
 
-	userHandler := handler.NewUserHandler(userUC)
-	r.Get("/user/all", userHandler.GetAll)
+		r.Route("/public", func(r chi.Router) {
+			r.Mount("/stores", handler.NewStoreHandler(storeUC).PublicRoutes())
+			r.Mount("/restrictions", handler.NewRestrictionHandler(restrictionUC).PublicRoutes())
+		})
 
-	r.Route("/user", func(r chi.Router) {
-		r.Use(middleware.JWTAuth)
-		r.Get("/profile", userHandler.GetProfile)
-		r.Put("/profile", userHandler.UpdateName)
-		r.Delete("/", userHandler.DeleteProfile)
-	})
+		r.Route("/me", func(r chi.Router) {
+			r.Use(middleware.JWTAuth)
 
-	r.Route("/favorites", func(r chi.Router) {
-		r.Use(middleware.JWTAuth)
-		r.Mount("/", handler.NewFavoritesHandler(favoritesUC).Routes())
-	})
-
-	r.Route("/lists", func(r chi.Router) {
-		r.Use(middleware.JWTAuth)
-		r.Mount("/", handler.NewShoppingListHandler(listUC).Routes())
-	})
-
-	r.Route("/stores", func(r chi.Router) {
-		r.Mount("/", handler.NewStoreHandler(storeUC).Routes())
-	})
-
-	r.Route("/history", func(r chi.Router) {
-		r.Use(middleware.JWTAuth)
-		r.Mount("/", handler.NewSearchHistoryHandler(historyUC).Routes())
+			r.Mount("/user", handler.NewUserHandler(userUC).UserRoutes())
+			r.Mount("/favorites", handler.NewFavoritesHandler(favoritesUC).UserRoutes())
+			r.Mount("/history", handler.NewSearchHistoryHandler(historyUC).UserRoutes())
+			r.Mount("/lists", handler.NewShoppingListHandler(listUC).UserRoutes())
+			r.Mount("/restrictions", handler.NewRestrictionHandler(restrictionUC).UserRoutes())
+		})
 	})
 
 	return r

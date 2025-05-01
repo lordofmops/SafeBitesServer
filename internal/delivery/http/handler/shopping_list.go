@@ -18,7 +18,7 @@ func NewShoppingListHandler(uc *usecase.ShoppingListUsecase) *ShoppingListHandle
 	return &ShoppingListHandler{uc: uc}
 }
 
-func (h *ShoppingListHandler) Routes() chi.Router {
+func (h *ShoppingListHandler) UserRoutes() chi.Router {
 	r := chi.NewRouter()
 	r.Post("/", h.CreateList)
 	r.Get("/", h.GetLists)

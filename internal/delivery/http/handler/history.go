@@ -18,7 +18,7 @@ func NewSearchHistoryHandler(uc *usecase.SearchHistoryUsecase) *SearchHistoryHan
 	return &SearchHistoryHandler{uc: uc}
 }
 
-func (h *SearchHistoryHandler) Routes() chi.Router {
+func (h *SearchHistoryHandler) UserRoutes() chi.Router {
 	r := chi.NewRouter()
 	r.Get("/", h.GetAll)
 	r.Post("/", h.Add)

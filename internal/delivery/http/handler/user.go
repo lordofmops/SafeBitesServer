@@ -18,12 +18,17 @@ func NewUserHandler(uc *usecase.UserUsecase) *UserHandler {
 	return &UserHandler{uc: uc}
 }
 
-func (h *UserHandler) Routes() chi.Router {
+func (h *UserHandler) UserRoutes() chi.Router {
 	r := chi.NewRouter()
-	r.Get("/all", h.GetAll)
 	r.Get("/profile", h.GetProfile)
 	r.Put("/profile", h.UpdateName)
 	r.Delete("/", h.DeleteProfile)
+	return r
+}
+
+func (h *UserHandler) PublicRoutes() chi.Router {
+	r := chi.NewRouter()
+	r.Get("/all", h.GetAll)
 	return r
 }
 
