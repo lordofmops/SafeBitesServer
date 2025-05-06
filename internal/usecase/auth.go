@@ -45,7 +45,7 @@ func (uc *AuthUsecase) Register(ctx context.Context, login, password, name strin
 		Name:         name,
 	}
 	if err := uc.repo.Create(ctx, user); err != nil {
-		return nil, err
+		return nil, errors.New("пользователь уже существует")
 	}
 	return user, nil
 }

@@ -29,7 +29,7 @@ func (h *RestrictionHandler) UserRoutes() chi.Router {
 func (h *RestrictionHandler) PublicRoutes() chi.Router {
 	r := chi.NewRouter()
 	r.Post("/", h.CreateRestriction)
-	r.Get("/", h.GetAll)
+	r.Get("/all", h.GetAll)
 	return r
 }
 

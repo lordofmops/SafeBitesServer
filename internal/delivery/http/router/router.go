@@ -26,6 +26,7 @@ func NewRouter(
 		r.Route("/public", func(r chi.Router) {
 			r.Mount("/stores", handler.NewStoreHandler(storeUC).PublicRoutes())
 			r.Mount("/restrictions", handler.NewRestrictionHandler(restrictionUC).PublicRoutes())
+			r.Mount("/user", handler.NewUserHandler(userUC).PublicRoutes())
 		})
 
 		r.Route("/me", func(r chi.Router) {
