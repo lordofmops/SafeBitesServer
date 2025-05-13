@@ -16,8 +16,23 @@ func NewFavoriteRepository(db *gorm.DB) *FavoritesRepository {
 	return &FavoritesRepository{db: db}
 }
 
-func (r *FavoritesRepository) Add(ctx context.Context, fav *entity.Favorites) error {
-	return r.db.WithContext(ctx).Create(fav).Error
+func (r *FavoritesRepository) Add(ctx context.Context, userID uuid.UUID, barcode string) error {
+	var exists bool
+	err := r.db.WithContext(ctx).
+		Model(&entity.Favorites{}).
+		Select("count(*) > 0").
+		Where("user_id = ? AND barcode = ?", userID, barcode).
+		Find(&exists).Error
+	if err != nil {
+		return err
+	}
+	if exists {
+		return nil // уже в избранном — не добавляем
+	}
+	return r.db.WithContext(ctx).Create(&entity.Favorites{
+		UserID:  userID,
+		Barcode: barcode,
+	}).Error
 }
 
 func (r *FavoritesRepository) Delete(ctx context.Context, userID uuid.UUID, barcode string) error {

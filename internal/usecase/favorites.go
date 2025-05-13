@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	"SafeBitesServer/internal/entity"
 	"context"
 
 	"github.com/google/uuid"
@@ -12,7 +11,7 @@ type FavoritesUsecase struct {
 }
 
 type FavoriteRepo interface {
-	Add(context.Context, *entity.Favorites) error
+	Add(ctx context.Context, userID uuid.UUID, barcode string) error
 	Delete(context.Context, uuid.UUID, string) error
 	List(context.Context, uuid.UUID) ([]string, error)
 }
@@ -22,10 +21,7 @@ func NewFavoritesUsecase(r FavoriteRepo) *FavoritesUsecase {
 }
 
 func (uc *FavoritesUsecase) Add(ctx context.Context, userID uuid.UUID, barcode string) error {
-	return uc.repo.Add(ctx, &entity.Favorites{
-		UserID:  userID,
-		Barcode: barcode,
-	})
+	return uc.repo.Add(ctx, userID, barcode)
 }
 
 func (uc *FavoritesUsecase) Delete(ctx context.Context, userID uuid.UUID, barcode string) error {

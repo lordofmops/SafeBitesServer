@@ -44,8 +44,18 @@ func (r *UserRepository) Create(ctx context.Context, user *entity.User) error {
 	return r.db.WithContext(ctx).Create(user).Error
 }
 
-func (r *UserRepository) UpdateName(ctx context.Context, id uuid.UUID, name string) error {
-	return r.db.WithContext(ctx).Model(&entity.User{}).Where("id = ?", id).Update("name", name).Error
+func (r *UserRepository) UpdateName(ctx context.Context, id uuid.UUID, name string) (*entity.User, error) {
+	var user entity.User
+	if err := r.db.WithContext(ctx).Where("id = ?", id).First(&user).Error; err != nil {
+		return nil, err
+	}
+
+	user.Name = name
+	if err := r.db.WithContext(ctx).Save(&user).Error; err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }
 
 func (r *UserRepository) Delete(ctx context.Context, id uuid.UUID) error {

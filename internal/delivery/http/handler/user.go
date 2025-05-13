@@ -63,11 +63,12 @@ func (h *UserHandler) UpdateName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.uc.UpdateName(r.Context(), userID, data.Name); err != nil {
+	user, err := h.uc.UpdateName(r.Context(), userID, data.Name)
+	if err != nil {
 		response.Error(w, http.StatusInternalServerError, "не удалось обновить имя")
 		return
 	}
-	response.JSON(w, http.StatusOK, "имя обновлено")
+	response.JSON(w, http.StatusOK, user)
 }
 
 func (h *UserHandler) DeleteProfile(w http.ResponseWriter, r *http.Request) {

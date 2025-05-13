@@ -27,21 +27,42 @@ func (r *RestrictionRepository) GetAll(ctx context.Context) ([]*entity.Restricti
 	return restrictions, nil
 }
 
-func (r *RestrictionRepository) Add(ctx context.Context, ur *entity.UserRestriction) error {
-	return r.db.WithContext(ctx).Create(ur).Error
+func (r *RestrictionRepository) Add(ctx context.Context, ur *entity.UserRestriction) ([]entity.Restriction, error) {
+	if err := r.db.WithContext(ctx).Create(ur).Error; err != nil {
+		return nil, err
+	}
+
+	var restrictions []entity.Restriction
+	err := r.db.WithContext(ctx).
+		Joins("JOIN user_restrictions ur ON ur.restriction_id = restrictions.id").
+		Where("ur.user_id = ?", ur.UserID).
+		Find(&restrictions).Error
+
+	return restrictions, err
 }
 
-func (r *RestrictionRepository) Remove(ctx context.Context, userID, restrictionID uuid.UUID) error {
-	return r.db.WithContext(ctx).
+func (r *RestrictionRepository) Remove(ctx context.Context, userID, restrictionID uuid.UUID) ([]entity.Restriction, error) {
+	err := r.db.WithContext(ctx).
 		Where("user_id = ? AND restriction_id = ?", userID, restrictionID).
 		Delete(&entity.UserRestriction{}).Error
+	if err != nil {
+		return nil, err
+	}
+
+	var restrictions []entity.Restriction
+	err = r.db.WithContext(ctx).
+		Joins("JOIN user_restrictions ur ON ur.restriction_id = restrictions.id").
+		Where("ur.user_id = ?", userID).
+		Find(&restrictions).Error
+
+	return restrictions, err
 }
 
 func (r *RestrictionRepository) GetUserRestrictions(ctx context.Context, userID uuid.UUID) ([]entity.Restriction, error) {
 	var restrictions []entity.Restriction
 	err := r.db.WithContext(ctx).
 		Table("restrictions").
-		Joins("JOIN user_restrictions ur ON ur.restriction_id = restrictions.restriction_id").
+		Joins("JOIN user_restrictions ur ON ur.restriction_id = restrictions.id").
 		Where("ur.user_id = ?", userID).
 		Find(&restrictions).Error
 	return restrictions, err

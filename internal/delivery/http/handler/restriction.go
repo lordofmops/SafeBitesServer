@@ -80,20 +80,22 @@ func (h *RestrictionHandler) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.uc.Add(r.Context(), userID, req.RestrictionID); err != nil {
+	restrictions, err := h.uc.Add(r.Context(), userID, req.RestrictionID)
+	if err != nil {
 		response.Error(w, http.StatusInternalServerError, "не удалось добавить")
 		return
 	}
-	response.JSON(w, http.StatusCreated, "ограничение добавлено")
+	response.JSON(w, http.StatusCreated, restrictions)
 }
 
 func (h *RestrictionHandler) Remove(w http.ResponseWriter, r *http.Request) {
 	userID := r.Context().Value("userID").(uuid.UUID)
 	restrictionID, _ := uuid.Parse(chi.URLParam(r, "id"))
 
-	if err := h.uc.Remove(r.Context(), userID, restrictionID); err != nil {
+	restrictions, err := h.uc.Remove(r.Context(), userID, restrictionID)
+	if err != nil {
 		response.Error(w, http.StatusInternalServerError, "не удалось удалить")
 		return
 	}
-	response.JSON(w, http.StatusOK, "ограничение удалено")
+	response.JSON(w, http.StatusOK, restrictions)
 }

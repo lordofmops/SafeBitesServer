@@ -10,7 +10,7 @@ type UserRepository interface {
 	GetAll(context.Context) ([]*entity.User, error)
 	GetByID(context.Context, uuid.UUID) (*entity.User, error)
 	GetByLogin(context.Context, string) (*entity.User, error)
-	UpdateName(context.Context, uuid.UUID, string) error
+	UpdateName(context.Context, uuid.UUID, string) (*entity.User, error)
 	Delete(context.Context, uuid.UUID) error
 }
 
@@ -30,7 +30,7 @@ func (uc *UserUsecase) GetProfile(ctx context.Context, id uuid.UUID) (*entity.Us
 	return uc.repo.GetByID(ctx, id)
 }
 
-func (uc *UserUsecase) UpdateName(ctx context.Context, id uuid.UUID, name string) error {
+func (uc *UserUsecase) UpdateName(ctx context.Context, id uuid.UUID, name string) (*entity.User, error) {
 	return uc.repo.UpdateName(ctx, id, name)
 }
 

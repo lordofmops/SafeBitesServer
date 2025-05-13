@@ -8,8 +8,8 @@ import (
 
 type RestrictionRepo interface {
 	CreateRestriction(context.Context, *entity.Restriction) error
-	Add(context.Context, *entity.UserRestriction) error
-	Remove(context.Context, uuid.UUID, uuid.UUID) error
+	Add(context.Context, *entity.UserRestriction) ([]entity.Restriction, error)
+	Remove(context.Context, uuid.UUID, uuid.UUID) ([]entity.Restriction, error)
 	GetUserRestrictions(context.Context, uuid.UUID) ([]entity.Restriction, error)
 	GetAll(context.Context) ([]*entity.Restriction, error)
 }
@@ -35,14 +35,14 @@ func (uc *RestrictionUsecase) GetAll(ctx context.Context) ([]*entity.Restriction
 	return uc.repo.GetAll(ctx)
 }
 
-func (uc *RestrictionUsecase) Add(ctx context.Context, userID, restrictionID uuid.UUID) error {
+func (uc *RestrictionUsecase) Add(ctx context.Context, userID, restrictionID uuid.UUID) ([]entity.Restriction, error) {
 	return uc.repo.Add(ctx, &entity.UserRestriction{
 		UserID:        userID,
 		RestrictionID: restrictionID,
 	})
 }
 
-func (uc *RestrictionUsecase) Remove(ctx context.Context, userID, restrictionID uuid.UUID) error {
+func (uc *RestrictionUsecase) Remove(ctx context.Context, userID, restrictionID uuid.UUID) ([]entity.Restriction, error) {
 	return uc.repo.Remove(ctx, userID, restrictionID)
 }
 
